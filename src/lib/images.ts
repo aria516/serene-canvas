@@ -106,7 +106,7 @@ export const photos: Photo[] = [
 ];
 
 export const heroImage = {
-  src: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1920&q=80",
+  src: "https://i.imgur.com/rMs5C4P.jpeg",
   title: "Capturing Moments",
   subtitle: "Photography that tells your story",
 };
