@@ -20,21 +20,21 @@ const About = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Image */}
             <div className="relative">
-              <div className="aspect-[4/5] rounded-2xl overflow-hidden">
+              <div className="aspect-[4/5] overflow-hidden">
                 <img
                   src="https://images.unsplash.com/photo-1552168324-d612d77725e3?w=800&q=80"
                   alt="Photographer at work"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                 />
               </div>
               {/* Decorative element */}
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/10 rounded-2xl -z-10" />
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 border border-primary/20 -z-10" />
             </div>
 
             {/* Content */}
             <div>
-              <p className="text-primary font-medium mb-2">Hello, I'm</p>
-              <h1 className="text-4xl md:text-5xl font-light tracking-wide mb-6">
+              <p className="text-primary font-serif tracking-widest mb-2 uppercase text-xs">Hello, I'm</p>
+              <h1 className="text-4xl md:text-6xl font-serif tracking-tight mb-8">
                 Alex <span className="text-primary">Mitchell</span>
               </h1>
               <p className="text-muted-foreground text-lg leading-relaxed mb-6">
@@ -60,8 +60,8 @@ const About = () => {
                     className="text-center p-4 bg-muted/50 rounded-xl"
                   >
                     <stat.icon className="w-5 h-5 text-primary mx-auto mb-2" />
-                    <p className="text-2xl font-semibold">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground">{stat.label}</p>
+                    <p className="text-3xl font-serif text-foreground">{stat.value}</p>
+                    <p className="text-xs uppercase tracking-widest text-muted-foreground">{stat.label}</p>
                   </div>
                 ))}
               </div>
@@ -130,7 +130,7 @@ const About = () => {
             ].map((service) => (
               <div
                 key={service.title}
-                className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-lg transition-shadow duration-300"
+                className="group bg-card border border-border transition-all duration-500 hover:border-primary/50"
               >
                 <div className="aspect-[4/3] overflow-hidden">
                   <img

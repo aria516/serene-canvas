@@ -1,29 +1,84 @@
-import { useState, useMemo } from "react";
+import { useState, useRef } from "react";
 import { photos, categories, type Category, type Photo } from "@/lib/images";
 import { Lightbox } from "./Lightbox";
 import { cn } from "@/lib/utils";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 interface GalleryProps {
   showFilters?: boolean;
   limit?: number;
 }
 
+const PhotoCard = ({
+  photo,
+  index,
+  spanClass,
+  onClick,
+}: {
+  photo: Photo;
+  index: number;
+  spanClass: string;
+  onClick: () => void;
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Apple-style scroll parallax:
+  // Card opacity and scale responds subtely to scroll position
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  // Parallax for the image inside the card
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+
+  // Subtle entry animation
+  const opacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+  const scale = useTransform(scrollYProgress, [0, 0.1], [0.95, 1]);
+
+  const springScale = useSpring(scale, { stiffness: 50, damping: 20 });
+  const springOpacity = useSpring(opacity, { stiffness: 50, damping: 20 });
+
+  return (
+    <motion.div
+      ref={ref}
+      style={{
+        scale: springScale,
+        // Removed opacity: springOpacity to prevent 'fading from black'
+      }}
+      className={cn(
+        "relative group overflow-hidden rounded-[2rem] bg-neutral-900 shadow-2xl cursor-pointer will-change-transform z-0",
+        spanClass
+      )}
+      onClick={onClick}
+    >
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <motion.div
+          style={{ y }}
+          className="w-full h-[120%] -mt-[10%]"
+        >
+          <img
+            src={photo.src}
+            alt={photo.title}
+            className="w-full h-full object-cover" // Removed hover scale
+            loading="lazy"
+          />
+        </motion.div>
+      </div>
+
+      {/* Apple-style gradient overlay - subtle bottom darkening */}
+      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
+
+
+    </motion.div>
+  );
+};
+
 export function Gallery({ showFilters = true, limit }: GalleryProps) {
   const [activeCategory, setActiveCategory] = useState<Category>("All");
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
-  const filteredPhotos = useMemo(() => {
-    const filtered =
-      activeCategory === "All"
-        ? photos
-        : photos.filter((photo) => photo.category === activeCategory);
-    return limit ? filtered.slice(0, limit) : filtered;
-  }, [activeCategory, limit]);
-
-  const handleImageLoad = (id: string) => {
-    setLoadedImages((prev) => new Set(prev).add(id));
-  };
+  const filteredPhotos = limit ? photos.slice(0, limit) : photos;
 
   const handleNext = () => {
     if (!selectedPhoto) return;
@@ -45,92 +100,35 @@ export function Gallery({ showFilters = true, limit }: GalleryProps) {
   };
 
   return (
-    <section id="gallery" className="py-20 px-6">
-      <div className="container mx-auto">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-light tracking-wide mb-4">
-            Featured <span className="text-primary">Work</span>
-          </h2>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            A curated selection of moments captured through the lens
-          </p>
-        </div>
+    <section id="gallery" className="py-24 px-4 md:px-8 w-full bg-black min-h-screen">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-6 w-full max-w-[2000px] mx-auto">
+        {filteredPhotos.map((photo, index) => {
+          const pattern = index % 5;
+          // Rhythm: Full (6) -> Half (3) -> Half (3) -> Third (2) -> Third (2)
+          let spanClass = "md:col-span-2 aspect-[3/4]";
 
-        {/* Category Filters */}
-        {showFilters && (
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
-                  activeCategory === category
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-                )}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        )}
+          if (pattern === 0) {
+            spanClass = "md:col-span-6 aspect-[16/9] md:aspect-[21/9]";
+          } else if (pattern === 1) {
+            spanClass = "md:col-span-4 aspect-[16/10]";
+          } else if (pattern === 2) {
+            spanClass = "md:col-span-2 aspect-[3/4]";
+          } else if (pattern === 3 || pattern === 4) {
+            spanClass = "md:col-span-3 aspect-[4/3]";
+          }
 
-        {/* Photo Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPhotos.map((photo, index) => (
-            <div
+          return (
+            <PhotoCard
               key={photo.id}
-              className={cn(
-                "group cursor-pointer image-card",
-                photo.aspectRatio === "portrait" && "sm:row-span-2",
-                photo.aspectRatio === "landscape" && "sm:col-span-1"
-              )}
+              photo={photo}
+              index={index}
+              spanClass={spanClass}
               onClick={() => setSelectedPhoto(photo)}
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <div
-                className={cn(
-                  "relative overflow-hidden rounded-lg bg-muted",
-                  photo.aspectRatio === "portrait"
-                    ? "aspect-[3/4]"
-                    : photo.aspectRatio === "square"
-                    ? "aspect-square"
-                    : "aspect-[4/3]"
-                )}
-              >
-                {/* Skeleton loader */}
-                {!loadedImages.has(photo.id) && (
-                  <div className="absolute inset-0 bg-muted animate-pulse" />
-                )}
-
-                <img
-                  src={photo.src}
-                  alt={photo.title}
-                  className={cn(
-                    "w-full h-full object-cover transition-transform duration-500 group-hover:scale-105",
-                    loadedImages.has(photo.id) ? "opacity-100" : "opacity-0"
-                  )}
-                  loading="lazy"
-                  onLoad={() => handleImageLoad(photo.id)}
-                />
-
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                {/* Title */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                  <h3 className="text-white font-medium">{photo.title}</h3>
-                  <p className="text-white/70 text-sm">{photo.category}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+            />
+          );
+        })}
       </div>
 
-      {/* Lightbox */}
       <Lightbox
         photo={selectedPhoto}
         onClose={() => setSelectedPhoto(null)}

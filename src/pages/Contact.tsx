@@ -38,9 +38,10 @@ const Contact = () => {
       {/* Page Header */}
       <section className="pt-32 pb-12 px-6">
         <div className="container mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-light tracking-wide mb-4">
+          <h1 className="text-4xl md:text-6xl font-serif tracking-widest mb-6 uppercase">
             Get in <span className="text-primary">Touch</span>
           </h1>
+          <div className="h-1 w-20 bg-primary/20 mx-auto mb-8" />
           <p className="text-muted-foreground max-w-lg mx-auto">
             Have a project in mind or just want to say hello? I'd love to hear
             from you. Let's create something beautiful together.
@@ -53,7 +54,7 @@ const Contact = () => {
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
             {/* Contact Form */}
-            <div className="bg-card p-8 rounded-2xl border border-border">
+            <div className="bg-card p-8 border border-border transition-all hover:border-primary/30">
               <h2 className="text-2xl font-light mb-6">
                 Send a <span className="text-primary">Message</span>
               </h2>
@@ -111,7 +112,7 @@ const Contact = () => {
               </div>
 
               {/* Availability */}
-              <div className="mt-12 p-6 bg-muted/50 rounded-2xl">
+              <div className="mt-12 p-6 bg-muted/50 border-l-2 border-primary">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                   <p className="text-sm font-medium">Currently Available</p>
