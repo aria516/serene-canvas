@@ -1,46 +1,45 @@
-import { heroImage } from "@/lib/images";
-import { ChevronDown } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 export function Hero() {
-  const scrollToGallery = () => {
-    const gallery = document.getElementById("gallery");
-    gallery?.scrollIntoView({ behavior: "smooth" });
-  };
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          src={heroImage.src}
-          alt={heroImage.title}
-          className="w-full h-full object-cover"
-          loading="eager"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/60" />
-      </div>
+    <section ref={ref} className="pt-48 pb-12 px-6 flex flex-col items-center justify-center min-h-[90vh] relative overflow-hidden bg-black">
+      {/* Liquid background accent */}
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-6">
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-wide mb-4 animate-fade-up">
-          {heroImage.title}
-        </h1>
-        <p
-          className="text-lg md:text-xl text-white/80 font-light tracking-wider animate-fade-up"
-          style={{ animationDelay: "0.2s" }}
-        >
-          {heroImage.subtitle}
-        </p>
 
-        {/* Scroll Indicator */}
-        <button
-          onClick={scrollToGallery}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/70 hover:text-primary transition-colors animate-bounce"
-          aria-label="Scroll to gallery"
+      <motion.div
+        style={{ y, opacity }}
+        className="relative z-10 text-center max-w-5xl mx-auto"
+      >
+        <motion.h1
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="text-8xl md:text-[10rem] lg:text-[12rem] font-bold tracking-tighter text-center mb-8 text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 leading-[0.9]"
         >
-          <ChevronDown size={32} />
-        </button>
-      </div>
+          Eyes Of
+          <br />
+          Asia
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="text-2xl md:text-3xl text-neutral-400 max-w-lg mx-auto leading-relaxed font-medium tracking-tight"
+        >
+          Moments captured in silence.
+        </motion.p>
+      </motion.div>
     </section>
   );
 }

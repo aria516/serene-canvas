@@ -3,16 +3,8 @@ import { Instagram, Twitter, Linkedin, Mail, ArrowUp } from "lucide-react";
 
 const socialLinks = [
   { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
-  { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
   { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
   { icon: Mail, href: "mailto:hello@lenscraft.com", label: "Email" },
-];
-
-const footerLinks = [
-  { label: "Home", path: "/" },
-  { label: "Work", path: "/work" },
-  { label: "About", path: "/about" },
-  { label: "Contact", path: "/contact" },
 ];
 
 export function Footer() {
@@ -21,75 +13,58 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-muted/50 border-t border-border">
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-          {/* Brand */}
-          <div>
-            <Link
-              to="/"
-              className="text-xl font-semibold tracking-tight inline-block mb-4"
-            >
-              <span className="text-primary">LENS</span>
-              <span className="text-foreground">CRAFT</span>
-            </Link>
-            <p className="text-muted-foreground text-sm max-w-xs">
-              Capturing life's precious moments through the art of photography.
-              Every frame tells a story.
-            </p>
-          </div>
+    <footer className="bg-black text-white pt-24 pb-12 px-6 border-t border-white/5 relative overflow-hidden">
+      {/* Background Glow */}
+      <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-neutral-900/40 rounded-full blur-[128px] pointer-events-none" />
 
-          {/* Quick Links */}
-          <div className="flex flex-col items-start md:items-center">
-            <h4 className="font-medium mb-4 text-foreground">Quick Links</h4>
-            <ul className="space-y-2">
-              {footerLinks.map((link) => (
-                <li key={link.path}>
-                  <Link
-                    to={link.path}
-                    className="text-muted-foreground hover:text-primary transition-colors text-sm"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+      <div className="container mx-auto relative z-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-12">
 
-          {/* Social Links */}
-          <div className="flex flex-col items-start md:items-end">
-            <h4 className="font-medium mb-4 text-foreground">Follow Along</h4>
-            <div className="flex gap-3">
+        {/* Left Side: Call to Action */}
+        <div className="max-w-2xl w-full md:w-auto mb-8 md:mb-0">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter mb-6 leading-tight text-neutral-200">
+            Let's create something <span className="text-white">timeless.</span>
+          </h2>
+          <Link
+            to="/contact"
+            className="inline-flex items-center text-lg font-medium border-b border-white/30 pb-1 hover:text-white hover:border-white transition-all text-neutral-400"
+          >
+            Start a Project
+            <ArrowUp className="ml-2 w-4 h-4 rotate-45" />
+          </Link>
+        </div>
+
+        {/* Right Side: Structured Vertical Group */}
+        <div className="flex flex-col items-start md:items-end gap-6 text-neutral-500 text-sm w-full md:w-auto">
+
+          {/* Socials & Phrase Group */}
+          <div className="flex flex-col items-start md:items-end gap-2">
+            <div className="flex gap-5 items-center">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                  className="hover:text-white transition-colors"
                   aria-label={social.label}
                 >
-                  <social.icon size={18} />
+                  <social.icon size={20} />
                 </a>
               ))}
             </div>
+            <p className="text-xs text-neutral-600 font-medium tracking-wide">Made with love. From my morning to your night</p>
+          </div>
+
+          {/* Copyright & Back to top Row */}
+          <div className="flex items-center gap-6 md:gap-8 pt-2 md:pt-4 border-t border-white/5 md:border-none w-full md:w-auto justify-between md:justify-end">
+            <p className="whitespace-nowrap">© {new Date().getFullYear()} Eyes Of Asia.</p>
+
+            <button onClick={scrollToTop} className="hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap group">
+              Back to top <ArrowUp size={14} className="group-hover:-translate-y-1 transition-transform" />
+            </button>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 pt-6 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} LensCraft. All rights reserved.
-          </p>
-
-          <button
-            onClick={scrollToTop}
-            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
-          >
-            Back to top
-            <ArrowUp size={16} />
-          </button>
-        </div>
       </div>
     </footer>
   );
